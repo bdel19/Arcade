@@ -19,13 +19,77 @@ function buildInitialState() {
   state.getCurrentPlayer = function (){
     return state.currentPlayer[state.currentPlayerIdx];
   };
-
-  
-
-  
 }
-let options = ["", "", "", "", "", "", "", "", ""]
 
+//******************** board render ********************
+function renderState() {
+  boardElem.innerHTML = ""
+  for(let i=0; i<state.board.length; i++){
+    let something = state.board[i];
+      for (let j = 0; j < something.length; j++){
+        const cellElem = document.createElement("div");
+        const card = state.board[i][j]
+        cellElem.innerText=card
+        cellElem.classList.add("cell");
+        cellElem.dataset.index=`${i},${j}`
+        boardElem.appendChild(cellElem);
+      
+      }
+  }
+}
+
+// ******************** logic ********************
+function changeToXandO(){
+  if (state.players === "X" ) {
+    state.players = "O";
+  } else {
+    state.players= "X";
+    }
+}
+
+function changeTurn(){
+  state.winner=checkWin();
+  if (state.winner !== true){
+  if (state.currentPlayerIdx === 0){
+    state.currentPlayerIdx = 1;
+  }else{
+    state.currentPlayerIdx=0;
+  }
+  }
+}
+
+function renderPlayer() {
+  let text;
+  if(state.winner === true){
+    text = `
+    <span class="player">${state.currentPlayer}</span> has won!
+    `;
+  }
+  if(!state.currentPlayer[0] || !state.currentPlayer[1]){
+    text = `
+    <input name="player1" placeholder="Enter Player 1 Name">
+    <input name="player2" placeholder="Enter Player 2 Name">
+    <button class="start"> Start Game </button>
+    `;
+  }else {
+    text = `It's currently <span class="player">${state.getCurrentPlayer()}</span>'s turn`;
+  }
+  playerTurnElem.innerHTML = text;
+}
+
+function takeTurns(index){
+  let [row, column] = index;
+  console.log(index);
+  state.board[Number(row)][Number(column)] = state.players;
+  console.log(state.board[Number(row)][Number(column)]);
+  changeToXandO()
+  changeTurn();
+  renderPlayer();
+}
+
+function restart(){
+  return buildInitialState();
+}
 function checkWin(){
   const winConditions=[
     [[0,0], [0,1], [0,2]],
@@ -60,80 +124,7 @@ let winner;
   } return winner
 }
 
-
-//******************** render ********************
-function renderState() {
-  boardElem.innerHTML = ""
-  for(let i=0; i<state.board.length; i++){
-    let something = state.board[i];
-      for (let j = 0; j < something.length; j++){
-        const cellElem = document.createElement("div");
-        const card = state.board[i][j]
-        cellElem.innerText=card
-        cellElem.classList.add("cell");
-        cellElem.dataset.index=`${i},${j}`
-        boardElem.appendChild(cellElem);
-      
-      }
-    }
-}
-
-// ******************** logic ********************
-function changeToXandO(){
-  if (state.players === "X" ) {
-    state.players = "O";
-  } else {
-    state.players= "X";
-    }
-}
-function changeTurn(){
-  state.winner=checkWin();
-  if (state.winner !== true){
-  if (state.currentPlayerIdx === 0){
-    state.currentPlayerIdx = 1;
-
-  }else{
-    state.currentPlayerIdx=0;
-  }
-  }
-}
-
-
-function renderPlayer() {
-  let text;
-  if(state.winner === true){
-    text = `
-    <span class="player">${state.currentPlayer}</span> has won!
-    `;
-  }
-  if(!state.currentPlayer[0] || !state.currentPlayer[1]){
-    text = `
-    <input name="player1" placeholder="Enter Player 1 Name">
-    <input name="player2" placeholder="Enter Player 2 Name">
-    <button class="start"> Start Game </button>
-    `;
-  }else {
-    text = `It's currently <span class="player">${state.getCurrentPlayer()}</span>'s turn`;
-  }
-  playerTurnElem.innerHTML = text;
-}
-
-function takeTurns(index){
-  let [row, column] = index;
-  console.log(index);
-  state.board[Number(row)][Number(column)] = state.players;
-  console.log(state.board[Number(row)][Number(column)]);
-  changeToXandO()
-  changeTurn();
-  renderPlayer();
-}
-
-function restart(){
-  return buildInitialState();
-}
-
 //********************listeners********************
-
 resetButtonElement.addEventListener('click', function (event){ 
   buildInitialState();
   renderPlayer();
@@ -168,7 +159,6 @@ playerTurnElem.addEventListener("click", function(event){
   state.currentPlayer[1] = player2Input.value;
   renderPlayer();
   renderState();
-
 });
 
 buildInitialState();
