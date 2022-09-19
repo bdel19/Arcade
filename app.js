@@ -73,15 +73,10 @@ function renderState() {
         cellElem.classList.add("cell");
         cellElem.dataset.index=`${i},${j}`
         boardElem.appendChild(cellElem);
-        // cell.innerText="Cell"
+      
       }
     }
 }
-
-
-
-// maybe a dozen or so helper functions for tiny pieces of the interface
-
 
 // ******************** logic ********************
 function changeToXandO(){
@@ -100,23 +95,25 @@ function changeTurn(){
   }else{
     state.currentPlayerIdx=0;
   }
-}
+  }
 }
 
 
 function renderPlayer() {
   let text;
   if(state.winner === true){
-    text = `<span class="player">${state.currentPlayer}</span> has won!`
+    text = `
+    <span class="player">${state.currentPlayer}</span> has won!
+    `;
   }
-  else if(!state.currentPlayer[0] || !state.currentPlayer[1]){
+  if(!state.currentPlayer[0] || !state.currentPlayer[1]){
     text = `
     <input name="player1" placeholder="Enter Player 1 Name">
     <input name="player2" placeholder="Enter Player 2 Name">
     <button class="start"> Start Game </button>
     `;
   }else {
-    text = `It's currently <span class="player">${state.getCurrentPlayer()}</span>'s turn`
+    text = `It's currently <span class="player">${state.getCurrentPlayer()}</span>'s turn`;
   }
   playerTurnElem.innerHTML = text;
 }
@@ -155,26 +152,8 @@ boardElem.addEventListener('click', function(event){
     return
   }
   takeTurns([row, column]);
-  
   renderState();
-  // if()
 });
-
-
-
-function onBoardClick() {
-  changeTurn();
-  
-
-  // cellClicked();
-  
-  // update state, maybe with another dozen or so helper functions...
-
-  renderState();
-  
-// renderState() // show the user the new state
-}
-
 
 playerTurnElem.addEventListener("click", function(event){
   console.log("click");
@@ -191,9 +170,6 @@ playerTurnElem.addEventListener("click", function(event){
   renderState();
 
 });
-
-
-// boardElem.addEventListener('click', onBoardClick); // etc
 
 buildInitialState();
 renderState();
